@@ -1,0 +1,1 @@
+﻿gcloud functions deploy healthcareAPITest-cSharp --entry-point care.ai.cloud.functions.processHL7Message --runtime dotnet3 --trigger-topic hl7topic --region us-east4
