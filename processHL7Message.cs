@@ -36,7 +36,7 @@ namespace care.ai.cloud.functions
 
             try
             {
-                var builder = new ConfigurationBuilder();
+                ConfigurationBuilder builder = new ConfigurationBuilder();
                 BuildConfig(builder);
 
                 var host = Host.CreateDefaultBuilder()

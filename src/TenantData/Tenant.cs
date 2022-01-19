@@ -58,7 +58,17 @@ namespace care.ai.cloud.functions.src.TenantData
         public async Task<Tenant[]> GetTenantsAsync(string routeKey)
         {
             using HttpClient client = new HttpClient();
-            var result = await client.GetStringAsync($"https://dev-discover.care.ai/discovery/whois?routes.key={routeKey ?? "EPIC_ORG_1"}&routes.type=ROUTES_LICENSE_KEY");
+
+            string prefix = string.Empty;
+#if DEBUG
+            prefix = _config.GetValue<string>("DiscoveryAPI:DevelopmentPrefix");
+#endif
+
+            string url = string.Format(_config.GetValue<string>("DiscoveryAPI:TenantURL"), 
+                prefix, 
+                routeKey ?? _config.GetValue<string>("DiscoveryAPI:DefaultRouteKey"));
+
+            var result = await client.GetStringAsync(url);
             return JsonConvert.DeserializeObject<Tenant[]>(result);
         }
     }
