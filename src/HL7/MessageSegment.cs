@@ -1,10 +1,16 @@
-﻿namespace care.ai.cloud.functions.src.HL7
+﻿using Newtonsoft.Json;
+
+namespace care.ai.cloud.functions.src.HL7
 {
     public class MessageSegment : IMessageSegment
     {
-        public IMessageFields fields { get; set; }
-        public string segmentId { get; set; }
-        public object setId { get; set; }
+        [JsonProperty("fields")]
+        public IMessageFields Fields { get; set; }
+        [JsonProperty("segmentId")]
+        public string SegmentID { get; set; }
+        [JsonProperty("setId")]
+        public object SetId { get; set; }
+        [JsonProperty("ETag")]
         public object ETag { get; set; }
     }
 }

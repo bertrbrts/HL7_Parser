@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -57,19 +58,23 @@ namespace care.ai.cloud.functions.src.TenantData
 
         public async Task<Tenant[]> GetTenantsAsync(string routeKey)
         {
-            using HttpClient client = new HttpClient();
+            try
+            {
+                using HttpClient client = new HttpClient();
 
-            string prefix = string.Empty;
-#if DEBUG
-            prefix = _config.GetValue<string>("DiscoveryAPI:DevelopmentPrefix");
-#endif
+                var x = _config.GetValue<string>("DiscoveryAPI:TenantURL");
 
-            string url = string.Format(_config.GetValue<string>("DiscoveryAPI:TenantURL"), 
-                prefix, 
-                routeKey ?? _config.GetValue<string>("DiscoveryAPI:DefaultRouteKey"));
+                string url = string.Format(_config.GetValue<string>("DiscoveryAPI:TenantURL"),
+                    routeKey ?? _config.GetValue<string>("DiscoveryAPI:DefaultRouteKey"));
 
-            var result = await client.GetStringAsync(url);
-            return JsonConvert.DeserializeObject<Tenant[]>(result);
+                var result = await client.GetStringAsync(url);
+                return JsonConvert.DeserializeObject<Tenant[]>(result);
+            }
+            catch (Exception ex)
+            {
+                var t = ex.Message;
+                throw;
+            }
         }
     }
 }
