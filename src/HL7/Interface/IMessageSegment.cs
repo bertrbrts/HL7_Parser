@@ -3,8 +3,8 @@
     public interface IMessageSegment
     {
         object ETag { get; set; }
-        IMessageFields fields { get; set; }
-        string segmentId { get; set; }
-        object setId { get; set; }
+        IMessageFields Fields { get; set; }
+        string SegmentID { get; set; }
+        object SetId { get; set; }
     }
 }

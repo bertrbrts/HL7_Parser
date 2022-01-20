@@ -21,10 +21,10 @@ namespace care.ai.cloud.functions.src.PatientData
         {
             return new Poc
             {
-                ExternalFacilityId = message.GetValue("") ?? "",
-                ExternalLocationId = message.GetValue("") ?? "",
-                ExternalZoneId = message.GetValue("") ?? "",
-                ExternalBedId = message.GetValue("") ?? ""
+                ExternalFacilityId = message.GetValue("PV1.3.4") ?? "",
+                ExternalLocationId = message.GetValue("PV1.3.1") ?? "",
+                ExternalZoneId = message.GetValue("PV1.3.2") ?? "",
+                ExternalBedId = message.GetValue("PV1.3.3") ?? ""
             };
         }
     }

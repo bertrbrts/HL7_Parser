@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -45,26 +46,7 @@ namespace care.ai.cloud.functions
 
             try
             {
-                var builder = new ConfigurationBuilder();
-                BuildConfig(builder);
-
-                var host = Host.CreateDefaultBuilder()
-                    .ConfigureServices((context, services) =>
-                    {
-                        services.AddSingleton<IClientService, CloudHealthcareService>();
-                        services.AddSingleton<IHL7_Message, HL7_Message>();
-                        services.AddSingleton<IPatientEvent, PatientEvent>();
-                        services.AddTransient<IPublisherService, PublisherService>();
-                        services.AddTransient<IAddress, Address>();
-                        services.AddTransient<IEvent, Event>();
-                        services.AddTransient<IEventData, EventData>();
-                        services.AddTransient<IName, Name>();
-                        services.AddTransient<IPatient, Patient>();
-                        services.AddTransient<IPoc, Poc>();
-                        services.AddTransient<ITenant, Tenant>();
-                    })
-                    .Build();
-
+                IHost host = CreateHost();
                 IPatientEventService patientEventService = ActivatorUtilities.CreateInstance<PatientEventService>(host.Services);
                 Task.Run(async () => MessageIDs = await patientEventService.ExecuteAsync(data)).Wait();
             }
@@ -76,10 +58,32 @@ namespace care.ai.cloud.functions
             return Task.CompletedTask;
         }
 
-        static void BuildConfig(IConfigurationBuilder builder)
+        private static IHost CreateHost()
         {
-            builder.SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            return Host.CreateDefaultBuilder()                
+                .ConfigureAppConfiguration((context, builder) =>
+                {
+                    // Get Environment Config
+                    string env = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyConfigurationAttribute>().Configuration;
+                    builder.SetBasePath(Directory.GetCurrentDirectory() + @"/AppSettings/")
+                        .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile($"appsettings.{env}.json", optional: true);
+                })
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddSingleton<IClientService, CloudHealthcareService>();
+                    services.AddSingleton<IHL7_Message, HL7_Message>();
+                    services.AddSingleton<IPatientEvent, PatientEvent>();
+                    services.AddTransient<IPublisherService, PublisherService>();
+                    services.AddTransient<IAddress, Address>();
+                    services.AddTransient<IEvent, Event>();
+                    services.AddTransient<IEventData, EventData>();
+                    services.AddTransient<IName, Name>();
+                    services.AddTransient<IPatient, Patient>();
+                    services.AddTransient<IPoc, Poc>();
+                    services.AddTransient<ITenant, Tenant>();
+                })
+                .Build();
         }
     }
 }

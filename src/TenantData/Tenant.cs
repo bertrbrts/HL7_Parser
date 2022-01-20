@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -57,9 +58,19 @@ namespace care.ai.cloud.functions.src.TenantData
 
         public async Task<Tenant[]> GetTenantsAsync(string routeKey)
         {
-            using HttpClient client = new HttpClient();
-            var result = await client.GetStringAsync($"https://dev-discover.care.ai/discovery/whois?routes.key={routeKey ?? "EPIC_ORG_1"}&routes.type=ROUTES_LICENSE_KEY");
-            return JsonConvert.DeserializeObject<Tenant[]>(result);
+            try
+            {
+                using HttpClient client = new HttpClient();
+                string url = string.Format(_config.GetValue<string>("DiscoveryAPI:TenantURL"),
+                    routeKey ?? _config.GetValue<string>("DiscoveryAPI:DefaultRouteKey"));
+
+                var result = await client.GetStringAsync(url);
+                return JsonConvert.DeserializeObject<Tenant[]>(result);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

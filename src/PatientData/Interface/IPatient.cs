@@ -17,6 +17,6 @@ namespace care.ai.cloud.functions.src.PatientData
         IPoc Poc { get; set; }
         string Type { get; set; }
 
-        IPatient Create(IHL7_Message message);
+        IPatient Create(IHL7_Message message, string tenantName);
     }
 }

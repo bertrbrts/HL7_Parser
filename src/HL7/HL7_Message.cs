@@ -23,7 +23,7 @@ namespace care.ai.cloud.functions.src.HL7
         public IHL7_Message Create(string message)
         {
             try
-            {
+            {          
                 _service = new CloudHealthcareService(new BaseClientService.Initializer() { HttpClientInitializer = GoogleCredential.GetApplicationDefault() });
 
                 // Create GET Request.

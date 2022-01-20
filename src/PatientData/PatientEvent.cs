@@ -39,15 +39,16 @@ namespace care.ai.cloud.functions.src.PatientData
 
         public async Task<IPatientEvent> CreateAsync(IHL7_Message message)
         {
-            ITenant[] tenants = await _tenant.GetTenantsAsync(message.GetValue("MSH.3.1") ?? null);
+            ITenant[] tenants = await _tenant.GetTenantsAsync(message.GetValue("MSH.3") ?? null);
+            string tenantName = tenants.FirstOrDefault().FullName ?? string.Empty;
 
             return new PatientEvent
             {
                 EventId = Guid.NewGuid().ToString(),
                 Time = DateTime.UtcNow.ToString(),
-                Tenant = tenants.FirstOrDefault().FullName ?? string.Empty,
+                Tenant = tenantName,
                 Event = _event.Create(message),
-                EventData = _eventData.Create(message)
+                EventData = _eventData.Create(message, tenantName)
             };
         }
     }

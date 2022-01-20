@@ -15,11 +15,11 @@ namespace care.ai.cloud.functions.src.PatientData
         [JsonProperty("patient")]
         public IPatient Patient { get; set; }
 
-        public IEventData Create(IHL7_Message message)
+        public IEventData Create(IHL7_Message message, string tenantName)
         {
             return new EventData
             {
-                Patient = _patient.Create(message)
+                Patient = _patient.Create(message, tenantName)
             };
         }
     }
