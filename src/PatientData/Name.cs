@@ -1,28 +1,34 @@
 ﻿using care.ai.cloud.functions.src.HL7;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace care.ai.cloud.functions.src.PatientData
 {
+    /// <summary>
+    /// Patient Name
+    /// </summary>
     public partial class Name : IName
     {
-        IConfiguration _config;
-        public Name() { }
-        public Name(IConfiguration config)
-        {
-            _config = config;
-        }
-
+        /// <summary>
+        /// Patient First Name.
+        /// </summary>
         [JsonProperty("first")]
         public string First { get; set; }
-
+        /// <summary>
+        /// Patient Last Name.
+        /// </summary>
         [JsonProperty("last")]
         public string Last { get; set; }
-
+        /// <summary>
+        /// Patient Middle Name.
+        /// </summary>
         [JsonProperty("middle")]
         public string Middle { get; set; }
-
-        public IName Create(IHL7_Message message)
+        /// <summary>
+        /// IName Factory Method.
+        /// </summary>
+        /// <param name="message">IHL7_Message object.</param>
+        /// <returns>IName object.</returns>
+        public IName Factory(IHL7_Message message)
         {
             return new Name
             {

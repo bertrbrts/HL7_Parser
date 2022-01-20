@@ -8,54 +8,33 @@ namespace care.ai.cloud.functions.src.TenantData
 {
     public class Tenant : ITenant
     {
-        private IConfiguration _config;
+        private readonly IConfiguration _config;
+
+        /// <summary>
+        /// Full Name.
+        /// </summary>
+        [JsonProperty("fullName")]
+        public string FullName { get; set; }
+        /// <summary>
+        /// ID.
+        /// </summary>
+        [JsonProperty("_id")]
+        public string ID { get; set; }
+
+        /// <summary>
+        /// Tenant Constructor.
+        /// </summary>
+        /// <param name="config">IConfiguration object.</param>
         public Tenant(IConfiguration config)
         {
             _config = config;
         }
 
-        [JsonProperty("_id")]
-        public string ID { get; set; }
-
-        [JsonProperty("fullName")]
-        public string FullName { get; set; }
-
-        [JsonProperty("authentication")]
-        public Authentication Authentication { get; set; }
-
-        [JsonProperty("logoUrl")]
-        public string LogoUrl { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("privacy")]
-        public Privacy Privacy { get; set; }
-
-        [JsonProperty("routes")]
-        public Route[] Routes { get; set; }
-
-        [JsonProperty("configType")]
-        public string ConfigType { get; set; }
-
-        [JsonProperty("forceUpdate")]
-        public ForceUpdate ForceUpdate { get; set; }
-
-        [JsonProperty("otherMobileSettings")]
-        public OtherMobileSettings OtherMobileSettings { get; set; }
-
-        [JsonProperty("otherWebSettings")]
-        public OtherWebSettings OtherWebSettings { get; set; }
-
-        [JsonProperty("activeFeatures")]
-        public string[] ActiveFeatures { get; set; }
-
-        [JsonProperty("scheduling")]
-        public Scheduling[] Scheduling { get; set; }
-
-        [JsonProperty("dataImportSettingsModel")]
-        public DataImportSettingsModel DataImportSettingsModel { get; set; }
-
+        /// <summary>
+        /// Get Tenants Method.
+        /// </summary>
+        /// <param name="routeKey">Route Key.</param>
+        /// <returns>Task<Tenant[]></returns>
         public async Task<Tenant[]> GetTenantsAsync(string routeKey)
         {
             try

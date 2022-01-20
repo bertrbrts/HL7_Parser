@@ -3,12 +3,30 @@ using System.Collections.Generic;
 
 namespace care.ai.cloud.functions.src.HL7
 {
+    /// <summary>
+    /// IHL7_Message Interface.
+    /// </summary>
     public interface IHL7_Message
     {
+        /// <summary>
+        /// ETag.
+        /// </summary>
         string ETag { get; set; }
+        /// <summary>
+        /// Segments List.
+        /// </summary>
         IList<Segment> Segments { get; set; }
-        IHL7_Message Create(string message);
-
+        /// <summary>
+        /// IHL7_Message Factory Method.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        IHL7_Message Factory(string message);
+        /// <summary>
+        /// Get Value From Key.
+        /// </summary>
+        /// <param name="strValueFormat">Key.</param>
+        /// <returns>string value.</returns>
         string GetValue(string strValueFormat);
     }
 }

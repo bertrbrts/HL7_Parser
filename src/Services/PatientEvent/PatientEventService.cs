@@ -7,13 +7,23 @@ using System.Threading.Tasks;
 
 namespace care.ai.cloud.functions.src.Services.PatientEvent
 {
+    /// <summary>
+    /// Patient Event Service.
+    /// </summary>
     internal class PatientEventService : IPatientEventService
     {
-        IHL7_Message _hl7_Message;
-        IPatientEvent _patientEvent;
-        IPublisherService _publisherService;
+        private readonly IHL7_Message _hl7_Message;
+        private readonly IPatientEvent _patientEvent;
+        private readonly IPublisherService _publisherService;
 
         public string PatientEventJSON = string.Empty;
+
+        /// <summary>
+        /// PatientEventService Constructor.
+        /// </summary>
+        /// <param name="hL7_Message">IHL7_Message object.</param>
+        /// <param name="patientEvent">IPatientEvent object.</param>
+        /// <param name="publisherService">IPublisherService object.</param>
         public PatientEventService(IHL7_Message hL7_Message, IPatientEvent patientEvent, IPublisherService publisherService)
         {
             _hl7_Message = hL7_Message;
@@ -21,10 +31,15 @@ namespace care.ai.cloud.functions.src.Services.PatientEvent
             _publisherService = publisherService;
         }
 
+        /// <summary>
+        /// Execute Service Action.
+        /// </summary>
+        /// <param name="data">MessagePublishedData object.</param>
+        /// <returns>Task<List<string>></returns>
         public async Task<List<string>> ExecuteAsync(MessagePublishedData data)
         {
-            IHL7_Message message = _hl7_Message.Create(data?.Message.TextData);
-            IPatientEvent patientEvent = await _patientEvent.CreateAsync(message);
+            IHL7_Message message = _hl7_Message.Factory(data?.Message.TextData);
+            IPatientEvent patientEvent = await _patientEvent.FactoryAsync(message);
             PatientEventJSON = await Task.Run(() => JsonConvert.SerializeObject(patientEvent));
 
             return await _publisherService.PublishAsync(PatientEventJSON);

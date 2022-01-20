@@ -1,5 +1,8 @@
 ﻿namespace care.ai.cloud.functions.src.HL7
 {
+    /// <summary>
+    /// Message Fields.
+    /// </summary>
     public class MessageFields : IMessageFields
     {
         public string _0 { get; set; }

@@ -3,23 +3,37 @@ using Newtonsoft.Json;
 
 namespace care.ai.cloud.functions.src.PatientData
 {
-    public partial class Poc : IPoc
+    [JsonObject("Poc")]
+    public partial class PointOfCare : IPoc
     {
+        /// <summary>
+        /// External Facility ID.
+        /// </summary>
         [JsonProperty("externalFacilityId")]
         public string ExternalFacilityId { get; set; }
-
+        /// <summary>
+        /// External Location ID.
+        /// </summary>
         [JsonProperty("externalLocationId")]
         public string ExternalLocationId { get; set; }
-
+        /// <summary>
+        /// External Zone ID.
+        /// </summary>
         [JsonProperty("externalZoneId")]
         public string ExternalZoneId { get; set; }
-
+        /// <summary>
+        /// External Bed ID.
+        /// </summary>
         [JsonProperty("externalBedId")]
         public string ExternalBedId { get; set; }
-
-        public IPoc Create(IHL7_Message message)
+        /// <summary>
+        /// IPoc Factory Method.
+        /// </summary>
+        /// <param name="message">IHL7_Message object.</param>
+        /// <returns>IPoc object.</returns>
+        public IPoc Factory(IHL7_Message message)
         {
-            return new Poc
+            return new PointOfCare
             {
                 ExternalFacilityId = message.GetValue("PV1.3.4") ?? "",
                 ExternalLocationId = message.GetValue("PV1.3.1") ?? "",

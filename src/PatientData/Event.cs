@@ -5,21 +5,43 @@ using System.Linq;
 
 namespace care.ai.cloud.functions.src.PatientData
 {
+    /// <summary>
+    /// Patient Event
+    /// </summary>
     public partial class Event : IEvent
     {
-        IConfiguration _config;
+        private readonly IConfiguration _config;
+
+        /// <summary>
+        /// Event Code.
+        /// </summary>
+        [JsonProperty("code")]
+        public string Code { get; set; }
+        /// <summary>
+        /// Display Name.
+        /// </summary>
+        [JsonProperty("displayName")]
+        public string DisplayName { get; set; }
+
+        /// <summary>
+        /// Event Default Constructor.
+        /// </summary>
         public Event() { }
+        /// <summary>
+        /// Event Constructor.
+        /// </summary>
+        /// <param name="config">IConfiguration object.</param>
         public Event(IConfiguration config)
         {
             _config = config;
         }
 
-        [JsonProperty("code")]
-        public string Code { get; set; }
-        [JsonProperty("displayName")]
-        public string DisplayName { get; set; }
-
-        public IEvent Create(IHL7_Message message)
+        /// <summary>
+        /// Event Factory.
+        /// </summary>
+        /// <param name="message">IHL7_Message object.</param>
+        /// <returns>IEvent object.</returns>
+        public IEvent Factory(IHL7_Message message)
         {
             string _code = message.GetValue("MSH.8.2") ?? "";
 
@@ -33,7 +55,7 @@ namespace care.ai.cloud.functions.src.PatientData
         private string GetDisplayName(string code)
         {
             return _config.GetSection("EventCodeLookup:EventCodes").Get<EventCode[]>()
-                .FirstOrDefault(eventCode => eventCode.Name.Equals(code)).Value;
+                .FirstOrDefault(eventCode => eventCode.Key.Equals(code)).Value;
         }
     }
 }

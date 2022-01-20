@@ -12,15 +12,33 @@ namespace care.ai.cloud.functions.src.HL7
 {
     public class HL7_Message : IHL7_Message
     {
+        private static IClientService _service;
+
+        /// <summary>
+        /// ETag.
+        /// </summary>
+        public virtual string ETag { get; set; }
+        /// <summary>
+        /// Segments List.
+        /// </summary>
         [JsonProperty("segments")]
         public virtual IList<Segment> Segments { get; set; }
-        public virtual string ETag { get; set; }
-        private static IClientService _service;
+
+        /// <summary>
+        /// HL7_Message Constructor
+        /// </summary>
+        /// <param name="service">IClientService service</param>
         public HL7_Message(IClientService service)
         {
             _service = service;
         }
-        public IHL7_Message Create(string message)
+
+        /// <summary>
+        /// IHL7_Message Factory Method.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public IHL7_Message Factory(string message)
         {
             try
             {          
