@@ -61,18 +61,14 @@ namespace care.ai.cloud.functions.src.TenantData
             try
             {
                 using HttpClient client = new HttpClient();
-
-                var x = _config.GetValue<string>("DiscoveryAPI:TenantURL");
-
                 string url = string.Format(_config.GetValue<string>("DiscoveryAPI:TenantURL"),
                     routeKey ?? _config.GetValue<string>("DiscoveryAPI:DefaultRouteKey"));
 
                 var result = await client.GetStringAsync(url);
                 return JsonConvert.DeserializeObject<Tenant[]>(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var t = ex.Message;
                 throw;
             }
         }

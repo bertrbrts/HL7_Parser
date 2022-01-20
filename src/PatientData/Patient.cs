@@ -1,6 +1,7 @@
 ﻿using care.ai.cloud.functions.src.HL7;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System;
 
 namespace care.ai.cloud.functions.src.PatientData
 {
@@ -56,12 +57,14 @@ namespace care.ai.cloud.functions.src.PatientData
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        public IPatient Create(IHL7_Message message)
+        public IPatient Create(IHL7_Message message, string tenantName)
         {
+            string _mrn = message.GetValue("PID.3[1].1") ?? "";
+
             return new Patient
             {
                 Poc = _iPoc.Create(message),
-                Mrn = message.GetValue("PID.3[1].1") ?? "",
+                Mrn = _mrn,
                 AdmitDate = message.GetValue("PV1.44") ?? "",
                 AdmitReason = message.GetValue("PV1.4.2") ?? "",
                 DischargedDate = message.GetValue("PV1.45") ?? "",
@@ -70,7 +73,7 @@ namespace care.ai.cloud.functions.src.PatientData
                 Phone = message.GetValue("PID.13") ?? "",
                 Address = _address.Create(message),
                 Name = _name.Create(message),
-                PatientId = "<< TENANT_NAME|External Facility Id|Unique Patient Id >>",
+                PatientId = $"{tenantName}|{message.GetValue("PV1.3.4")}|{_mrn}",
                 Type = "IDENTITY.PATIENT"
             };
         }

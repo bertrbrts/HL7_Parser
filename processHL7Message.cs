@@ -57,7 +57,7 @@ namespace care.ai.cloud.functions
                 {
                     // Get Environment Config
                     string env = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyConfigurationAttribute>().Configuration;
-                    builder.SetBasePath(Directory.GetCurrentDirectory())
+                    builder.SetBasePath(Directory.GetCurrentDirectory() + @"/AppSettings/")
                         .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
                         .AddJsonFile($"appsettings.{env}.json", optional: true);
                 })

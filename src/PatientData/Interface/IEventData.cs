@@ -6,6 +6,6 @@ namespace care.ai.cloud.functions.src.PatientData
     {
         IPatient Patient { get; set; }
 
-        IEventData Create(IHL7_Message message);
+        IEventData Create(IHL7_Message message, string tenantName);
     }
 }

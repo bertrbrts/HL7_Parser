@@ -12,7 +12,7 @@ namespace CloudFunctionsTest
     public class processHL7MessageTests : FunctionTestBase<processHL7Message>
     {
         
-        private const string _hl7Message = @"projects/onboarding-playground-32819/locations/us-east4/datasets/EpicHL7DS/hl7V2Stores/hl7v2Msgs/messages/xhImWV2sbYj3waAhALHokeZxqAVgLEKfE58EWCv49Sg=";
+        private const string _hl7Message = @"projects/onboarding-playground-32819/locations/us-east4/datasets/EpicHL7DS/hl7V2Stores/hl7v2Msgs/messages/ijjUhCjDGQqm8z-6kDWXJcvfelNQi2bFbzv7rnNEJxs=";
 
         [TestMethod]
         public async Task HandleAsyncTest()
