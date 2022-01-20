@@ -2,6 +2,7 @@
 using care.ai.cloud.functions.src.PatientData;
 using Google.Events.Protobuf.Cloud.PubSub.V1;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace care.ai.cloud.functions.src.Services.PatientEvent
@@ -20,13 +21,13 @@ namespace care.ai.cloud.functions.src.Services.PatientEvent
             _publisherService = publisherService;
         }
 
-        public async Task ExecuteAsync(MessagePublishedData data)
+        public async Task<List<string>> ExecuteAsync(MessagePublishedData data)
         {
             IHL7_Message message = _hl7_Message.Create(data?.Message.TextData);
             IPatientEvent patientEvent = await _patientEvent.CreateAsync(message);
             PatientEventJSON = await Task.Run(() => JsonConvert.SerializeObject(patientEvent));
 
-            await _publisherService.PublishAsync(PatientEventJSON);
+            return await _publisherService.PublishAsync(PatientEventJSON);
         }
     }
 }

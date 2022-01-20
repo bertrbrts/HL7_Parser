@@ -18,7 +18,7 @@ namespace care.ai.cloud.functions.src.Services
             _config = config;
         }
 
-        public async Task<string> PublishAsync(string data)
+        public async Task<List<string>> PublishAsync(string data)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace care.ai.cloud.functions.src.Services
                     messageIDs.Add(await pubClient.PublishAsync(data));
                 }
 
-                return "Publish Successful";
+                return messageIDs;
             }
             catch (Exception)
             {

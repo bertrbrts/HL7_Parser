@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace care.ai.cloud.functions.src.Services
 {
     public interface IPublisherService
     {
-        Task<string> PublishAsync(string data);
+        Task<List<string>> PublishAsync(string data);
     }
 }
