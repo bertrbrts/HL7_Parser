@@ -2,23 +2,24 @@
 
 namespace care.ai.cloud.functions.src.TenantData
 {
+    /// <summary>
+    /// ITenant Interface.
+    /// </summary>
     public interface ITenant
     {
-        string[] ActiveFeatures { get; set; }
-        Authentication Authentication { get; set; }
-        string ConfigType { get; set; }
-        DataImportSettingsModel DataImportSettingsModel { get; set; }
-        ForceUpdate ForceUpdate { get; set; }
+        /// <summary>
+        /// Full Name.
+        /// </summary>
         string FullName { get; set; }
+        /// <summary>
+        /// ID.
+        /// </summary>
         string ID { get; set; }
-        string LogoUrl { get; set; }
-        string Name { get; set; }
-        OtherMobileSettings OtherMobileSettings { get; set; }
-        OtherWebSettings OtherWebSettings { get; set; }
-        Privacy Privacy { get; set; }
-        Route[] Routes { get; set; }
-        Scheduling[] Scheduling { get; set; }
-
+        /// <summary>
+        /// Get Tenants Method.
+        /// </summary>
+        /// <param name="routeKey">Route Key.</param>
+        /// <returns>Task<Tenant[]></returns>
         Task<Tenant[]> GetTenantsAsync(string routeKey);
     }
 }

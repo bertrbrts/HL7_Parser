@@ -1,5 +1,8 @@
 ﻿namespace care.ai.cloud.functions.src.HL7
 {
+    /// <summary>
+    /// IMessageFields Interface.
+    /// </summary>
     public interface IMessageFields
     {
         string _0 { get; set; }

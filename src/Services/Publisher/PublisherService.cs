@@ -7,24 +7,34 @@ using System.Threading.Tasks;
 
 namespace care.ai.cloud.functions.src.Services
 {
+    /// <summary>
+    /// Publisher Service.
+    /// </summary>
     public class PublisherService : IPublisherService
     {
         private readonly IConfiguration _config;
 
-        public const string PublishingService = "PublishingService:Publishers";
-
+        /// <summary>
+        /// Publisher Service Constructor.
+        /// </summary>
+        /// <param name="config">IConfiguration object.</param>
         public PublisherService(IConfiguration config)
         {
             _config = config;
         }
 
-        public async Task<string> PublishAsync(string data)
+        /// <summary>
+        /// Publisher Service Publish Action.
+        /// </summary>
+        /// <param name="data">data to publish.</param>
+        /// <returns>Task<List<string>></returns>
+        public async Task<List<string>> PublishAsync(string data)
         {
             try
             {
                 List<string> messageIDs = new List<string>();
 
-                var publisher = _config.GetSection(PublishingService).Get<Publisher[]>().ToList();
+                var publisher = _config.GetSection("PublishingService:Publishers").Get<Publisher[]>().ToList();
 
                 foreach (var p in publisher)
                 {
@@ -33,7 +43,7 @@ namespace care.ai.cloud.functions.src.Services
                     messageIDs.Add(await pubClient.PublishAsync(data));
                 }
 
-                return "Publish Successful";
+                return messageIDs;
             }
             catch (Exception)
             {
