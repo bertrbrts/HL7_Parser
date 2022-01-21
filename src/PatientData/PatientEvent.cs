@@ -1,4 +1,5 @@
 ﻿using care.ai.cloud.functions.src.HL7;
+using care.ai.cloud.functions.hl7;
 using care.ai.cloud.functions.src.TenantData;
 using Newtonsoft.Json;
 using System;
@@ -66,7 +67,7 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <returns>Task<IPatientEvent></returns>
         public async Task<IPatientEvent> FactoryAsync(IHL7_Message message)
         {
-            ITenant[] tenants = await _tenant.GetTenantsAsync(message.GetValue("MSH.3") ?? null);
+            ITenant[] tenants = await _tenant.GetTenantsAsync(Mappings.MSH.SendingFacility.GetValue(message) ?? null);
             string tenantName = tenants.FirstOrDefault().FullName ?? string.Empty;
 
             return new PatientEvent

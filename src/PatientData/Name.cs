@@ -1,4 +1,5 @@
 ﻿using care.ai.cloud.functions.src.HL7;
+using care.ai.cloud.functions.hl7;
 using Newtonsoft.Json;
 
 namespace care.ai.cloud.functions.src.PatientData
@@ -32,9 +33,9 @@ namespace care.ai.cloud.functions.src.PatientData
         {
             return new Name
             {
-                First = message.GetValue("PID.5.2") ?? "",
-                Last = message.GetValue("PID.5.1") ?? "",
-                Middle = message.GetValue("PID.5.3") ?? ""
+                First = Mappings.PID.PatientName.GivenName.GetValue(message) ?? "",
+                Last = Mappings.PID.PatientName.FamilyName.GetValue(message) ?? "",
+                Middle = Mappings.PID.PatientName.SecondAndFurtherGivenNamesOrInitialsThereof.GetValue(message) ?? ""
             };
         }
     }

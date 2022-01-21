@@ -1,4 +1,5 @@
-﻿using care.ai.cloud.functions.src.HL7;
+﻿using care.ai.cloud.functions.hl7;
+using care.ai.cloud.functions.src.HL7;
 using Newtonsoft.Json;
 
 namespace care.ai.cloud.functions.src.PatientData
@@ -47,11 +48,11 @@ namespace care.ai.cloud.functions.src.PatientData
         {
             return new Address
             {
-                Address1 = message.GetValue("PID.11.1") ?? "",
-                Address2 = message.GetValue("PID.11.2") ?? "",
-                City = message.GetValue("PID.11.3") ?? "",
-                State = message.GetValue("PID.11.4") ?? "",
-                Zipcode = message.GetValue("PID.11.5") ?? ""
+                Address1 = Mappings.PID.PatientAddress.StreetAddress.GetValue(message) ?? "",
+                Address2 = Mappings.PID.PatientAddress.OtherDesignation.GetValue(message) ?? "",
+                City = Mappings.PID.PatientAddress.City.GetValue(message) ?? "",
+                State = Mappings.PID.PatientAddress.StateOrProvince.GetValue(message) ?? "",
+                Zipcode = Mappings.PID.PatientAddress.ZipOrPostalCode.GetValue(message) ?? ""
             };
         }
     }

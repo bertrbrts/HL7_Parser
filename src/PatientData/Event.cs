@@ -1,4 +1,5 @@
 ﻿using care.ai.cloud.functions.src.HL7;
+using care.ai.cloud.functions.hl7;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <returns>IEvent object.</returns>
         public IEvent Factory(IHL7_Message message)
         {
-            string _code = message.GetValue("MSH.8.2") ?? "";
+            string _code = Mappings.MSH.MessageType.TriggerEvent.GetValue(message) ?? "";
 
             return new Event 
             { 

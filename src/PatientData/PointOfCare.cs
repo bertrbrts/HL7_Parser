@@ -1,4 +1,5 @@
 ﻿using care.ai.cloud.functions.src.HL7;
+using care.ai.cloud.functions.hl7;
 using Newtonsoft.Json;
 
 namespace care.ai.cloud.functions.src.PatientData
@@ -35,10 +36,10 @@ namespace care.ai.cloud.functions.src.PatientData
         {
             return new PointOfCare
             {
-                ExternalFacilityId = message.GetValue("PV1.3.4") ?? "",
-                ExternalLocationId = message.GetValue("PV1.3.1") ?? "",
-                ExternalZoneId = message.GetValue("PV1.3.2") ?? "",
-                ExternalBedId = message.GetValue("PV1.3.3") ?? ""
+                ExternalFacilityId = Mappings.PV1.AssignedPatientLocation.Facility.GetValue(message) ?? "",
+                ExternalLocationId = Mappings.PV1.AssignedPatientLocation.PointOfCare.GetValue(message) ?? "",
+                ExternalZoneId = Mappings.PV1.AssignedPatientLocation.Room.GetValue(message) ?? "",
+                ExternalBedId = Mappings.PV1.AssignedPatientLocation.Bed.GetValue(message) ?? ""
             };
         }
     }

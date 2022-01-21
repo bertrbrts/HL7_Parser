@@ -1,4 +1,5 @@
 ﻿using care.ai.cloud.functions.src.HL7;
+using care.ai.cloud.functions.hl7;
 using Newtonsoft.Json;
 
 namespace care.ai.cloud.functions.src.PatientData
@@ -99,21 +100,22 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <returns>IPatient object.</returns>
         public IPatient Factory(IHL7_Message message, string tenantName)
         {
-            string _mrn = message.GetValue("PID.3[1].1") ?? "";
+            string _mrn = Mappings.PID.PatientIdentifierList.IdNumber.GetValue(message, 1) ?? "";
+            string assignedFac = Mappings.PV1.AssignedPatientLocation.Facility.GetValue(message) ?? "";
 
             return new Patient
             {
                 Poc = _iPoc.Factory(message),
                 Mrn = _mrn,
-                AdmitDate = message.GetValue("PV1.44") ?? "",
-                AdmitReason = message.GetValue("PV1.4.2") ?? "",
-                DischargedDate = message.GetValue("PV1.45") ?? "",
-                Gender = message.GetValue("PID.8.2") ?? "",
-                Birthdate = message.GetValue("PID.7") ?? "",
-                Phone = message.GetValue("PID.13") ?? "",
+                AdmitDate = Mappings.PV1.AdmitDateTime.GetValue(message) ?? "",
+                AdmitReason = Mappings.PV1.AdmissionType.Text.GetValue(message) ?? "",
+                DischargedDate = Mappings.PV1.DischargeDateTime.GetValue(message) ?? "",
+                Gender = Mappings.PID.AdministrativeSex.Text.GetValue(message) ?? "",
+                Birthdate = Mappings.PID.DateTimeOfBirth.GetValue(message) ?? "",
+                Phone = Mappings.PID.PhoneNumberHome.GetValue(message) ?? "",
                 Address = _address.Factory(message),
                 Name = _name.Factory(message),
-                PatientId = $"{tenantName}|{message.GetValue("PV1.3.4")}|{_mrn}",
+                PatientId = $"{tenantName}|{assignedFac}|{_mrn}",
                 Type = "IDENTITY.PATIENT"
             };
         }

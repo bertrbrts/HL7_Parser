@@ -41,7 +41,7 @@ namespace care.ai.cloud.functions.src.HL7
         public IHL7_Message Factory(string message)
         {
             try
-            {          
+            {
                 _service = new CloudHealthcareService(new BaseClientService.Initializer() { HttpClientInitializer = GoogleCredential.GetApplicationDefault() });
 
                 // Create GET Request.
@@ -61,6 +61,27 @@ namespace care.ai.cloud.functions.src.HL7
 
                 // Deserialize JSON string into object.
                 HL7_Message hl7_message = JsonConvert.DeserializeObject<HL7_Message>(jsonResult);
+
+                //itterate and fix MSH
+                var origSeg = hl7_message.Segments.FirstOrDefault(x => x.SegmentId == "MSH");
+                var newSegment = new Segment()
+                {
+                    ETag = origSeg.ETag,
+                    Fields = new Dictionary<string, string>(),
+                    SegmentId = origSeg.SegmentId,
+                    SetId = origSeg.SetId
+                };
+
+                foreach (var field in origSeg.Fields)
+                {
+                    var comps = field.Key.Split(".");
+                    comps[0] = ((Convert.ToInt32(comps[0])) + 1).ToString();
+                    string newKey = string.Join(".", comps);
+                    newSegment.Fields.Add(newKey, field.Value);
+                }
+
+                hl7_message.Segments.Remove(origSeg);
+                hl7_message.Segments.Add(newSegment);
 
                 return hl7_message;
             }
@@ -108,28 +129,57 @@ namespace care.ai.cloud.functions.src.HL7
 
                     else if (componentId.Contains("["))
                     {
+                        //count number of components that are indexed
                         int indexerCount = componentId.Count(x => x == '[');
+
+                        //split out compoenents
                         var components = componentId.Split(".");
+
+                        //create arrays for each component, will fill one with and one without indexer
+                        string[] comp1 = new string[0];
                         string[] comp2 = new string[0];
                         string[] comp3 = new string[0];
 
+                        //remove index from fiedl
                         var index = components[0].IndexOf("[");
                         var index2 = components[0].IndexOf("]");
-                        var tmpcomp = components[0].Remove(index, index2 - index + 1);
-                        var comp1 = new string[] { components[0], tmpcomp };
+                        if (index != -1 && index2 != -1)
+                        {
+                            var tmpcomp = components[0].Remove(index, index2 - index + 1);
+                            comp1 = new string[] { components[0], tmpcomp };
+                        }
+                        else
+                        {
+                            comp1 = new string[] { components[0], components[0] };
+                        }
+
                         if (components.Length >= 2)
                         {
                             index = components[1].IndexOf("[");
                             index2 = components[1].IndexOf("]");
-                            tmpcomp = components[1].Remove(index, index2 - index + 1);
-                            comp2 = new string[] { components[0], tmpcomp };
+                            if (index != -1 && index2 != -1)
+                            {
+                                var tmpcomp = components[1].Remove(index, index2 - index + 1);
+                                comp2 = new string[] { components[0], tmpcomp };
+                            }
+                            else
+                            {
+                                comp2 = new string[] { components[1], components[1] };
+                            }
                         }
                         if (components.Length >= 3)
                         {
                             index = components[2].IndexOf("[");
                             index2 = components[2].IndexOf("]");
-                            tmpcomp = components[2].Remove(index, index2 - index + 1);
-                            comp3 = new string[] { components[0], tmpcomp };
+                            if (index != -1 && index2 != -1)
+                            {
+                                var tmpcomp = components[2].Remove(index, index2 - index + 1);
+                                comp3 = new string[] { components[0], tmpcomp };
+                            }
+                            else
+                            {
+                                comp3 = new string[] { components[2], components[2] };
+                            }
                         }
 
                         for (int i = 0; i < 2; i++)
