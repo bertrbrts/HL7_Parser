@@ -33,9 +33,9 @@ namespace care.ai.cloud.functions.src.PatientData
         {
             return new Name
             {
-                First = Mappings.PID.PatientName.GivenName.GetValue(message) ?? "",
-                Last = Mappings.PID.PatientName.FamilyName.GetValue(message) ?? "",
-                Middle = Mappings.PID.PatientName.SecondAndFurtherGivenNamesOrInitialsThereof.GetValue(message) ?? ""
+                First = Mappings.PID.PatientName.GivenName.GetValue(message) ?? string.Empty,
+                Last = Mappings.PID.PatientName.FamilyName.GetValue(message) ?? string.Empty,
+                Middle = Mappings.PID.PatientName.SecondAndFurtherGivenNamesOrInitialsThereof.GetValue(message) ?? string.Empty
             };
         }
     }

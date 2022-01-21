@@ -44,19 +44,14 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <returns>IEvent object.</returns>
         public IEvent Factory(IHL7_Message message)
         {
-            string _code = Mappings.MSH.MessageType.TriggerEvent.GetValue(message) ?? "";
+            string _code = Mappings.MSH.MessageType.TriggerEvent.GetValue(message) ?? string.Empty;
 
             return new Event 
             { 
                 Code = _code,
-                DisplayName = GetDisplayName(_code)
+                DisplayName = _config.GetSection("EventCodeLookup:EventCodes").Get<EventCode[]>()
+                    .FirstOrDefault(eventCode => eventCode.Key.Equals(_code))?.Value ?? string.Empty
             };        
-        }
-
-        private string GetDisplayName(string code)
-        {
-            return _config.GetSection("EventCodeLookup:EventCodes").Get<EventCode[]>()
-                .FirstOrDefault(eventCode => eventCode.Key.Equals(code)).Value;
         }
     }
 }

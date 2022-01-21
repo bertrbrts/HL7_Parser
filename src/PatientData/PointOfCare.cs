@@ -36,10 +36,10 @@ namespace care.ai.cloud.functions.src.PatientData
         {
             return new PointOfCare
             {
-                ExternalFacilityId = Mappings.PV1.AssignedPatientLocation.Facility.GetValue(message) ?? "",
-                ExternalLocationId = Mappings.PV1.AssignedPatientLocation.PointOfCare.GetValue(message) ?? "",
-                ExternalZoneId = Mappings.PV1.AssignedPatientLocation.Room.GetValue(message) ?? "",
-                ExternalBedId = Mappings.PV1.AssignedPatientLocation.Bed.GetValue(message) ?? ""
+                ExternalFacilityId = Mappings.PV1.AssignedPatientLocation.Facility.GetValue(message) ?? string.Empty,
+                ExternalLocationId = Mappings.PV1.AssignedPatientLocation.PointOfCare.GetValue(message) ?? string.Empty,
+                ExternalZoneId = Mappings.PV1.AssignedPatientLocation.Room.GetValue(message) ?? string.Empty,
+                ExternalBedId = Mappings.PV1.AssignedPatientLocation.Bed.GetValue(message) ?? string.Empty
             };
         }
     }

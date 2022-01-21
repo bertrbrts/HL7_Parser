@@ -100,19 +100,19 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <returns>IPatient object.</returns>
         public IPatient Factory(IHL7_Message message, string tenantName)
         {
-            string _mrn = Mappings.PID.PatientIdentifierList.IdNumber.GetValue(message, 1) ?? "";
-            string assignedFac = Mappings.PV1.AssignedPatientLocation.Facility.GetValue(message) ?? "";
+            string _mrn = Mappings.PID.PatientIdentifierList.IdNumber.GetValue(message, 1) ?? string.Empty;
+            string assignedFac = Mappings.PV1.AssignedPatientLocation.Facility.GetValue(message) ?? string.Empty;
 
             return new Patient
             {
                 Poc = _iPoc.Factory(message),
                 Mrn = _mrn,
-                AdmitDate = Mappings.PV1.AdmitDateTime.GetValue(message) ?? "",
-                AdmitReason = Mappings.PV1.AdmissionType.Text.GetValue(message) ?? "",
-                DischargedDate = Mappings.PV1.DischargeDateTime.GetValue(message) ?? "",
-                Gender = Mappings.PID.AdministrativeSex.Text.GetValue(message) ?? "",
-                Birthdate = Mappings.PID.DateTimeOfBirth.GetValue(message) ?? "",
-                Phone = Mappings.PID.PhoneNumberHome.GetValue(message) ?? "",
+                AdmitDate = Mappings.PV1.AdmitDateTime.GetValue(message) ?? string.Empty,
+                AdmitReason = Mappings.PV1.AdmissionType.Text.GetValue(message) ?? string.Empty,
+                DischargedDate = Mappings.PV1.DischargeDateTime.GetValue(message) ?? string.Empty,
+                Gender = Mappings.PID.AdministrativeSex.Text.GetValue(message) ?? string.Empty,
+                Birthdate = Mappings.PID.DateTimeOfBirth.GetValue(message) ?? string.Empty,
+                Phone = Mappings.PID.PhoneNumberHome.GetValue(message) ?? string.Empty,
                 Address = _address.Factory(message),
                 Name = _name.Factory(message),
                 PatientId = $"{tenantName}|{assignedFac}|{_mrn}",

@@ -48,11 +48,11 @@ namespace care.ai.cloud.functions.src.PatientData
         {
             return new Address
             {
-                Address1 = Mappings.PID.PatientAddress.StreetAddress.GetValue(message) ?? "",
-                Address2 = Mappings.PID.PatientAddress.OtherDesignation.GetValue(message) ?? "",
-                City = Mappings.PID.PatientAddress.City.GetValue(message) ?? "",
-                State = Mappings.PID.PatientAddress.StateOrProvince.GetValue(message) ?? "",
-                Zipcode = Mappings.PID.PatientAddress.ZipOrPostalCode.GetValue(message) ?? ""
+                Address1 = Mappings.PID.PatientAddress.StreetAddress.GetValue(message) ?? string.Empty,
+                Address2 = Mappings.PID.PatientAddress.OtherDesignation.GetValue(message) ?? string.Empty,
+                City = Mappings.PID.PatientAddress.City.GetValue(message) ?? string.Empty,
+                State = Mappings.PID.PatientAddress.StateOrProvince.GetValue(message) ?? string.Empty,
+                Zipcode = Mappings.PID.PatientAddress.ZipOrPostalCode.GetValue(message) ?? string.Empty
             };
         }
     }
