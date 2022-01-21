@@ -81,9 +81,84 @@ namespace care.ai.cloud.functions.src.HL7
                 var segment = Segments.First(x => x.SegmentId == segmentName);
                 try
                 {
+
                     if (segment.Fields.TryGetValue(componentId, out strValue))
                     {
                         return strValue;
+                    }
+
+
+                    else if (componentId.Contains("["))
+                    {
+                        int indexerCount = componentId.Count(x => x == '[');
+                        var components = componentId.Split(".");
+                        string[] comp2 = new string[0];
+                        string[] comp3 = new string[0];
+
+                        var index = components[0].IndexOf("[");
+                        var index2 = components[0].IndexOf("]");
+                        var tmpcomp = components[0].Remove(index, index2 - index + 1);
+                        var comp1 = new string[] { components[0], tmpcomp };
+                        if (components.Length >= 2)
+                        {
+                            index = components[1].IndexOf("[");
+                            index2 = components[1].IndexOf("]");
+                            tmpcomp = components[1].Remove(index, index2 - index + 1);
+                            comp2 = new string[] { components[0], tmpcomp };
+                        }
+                        if (components.Length >= 3)
+                        {
+                            index = components[2].IndexOf("[");
+                            index2 = components[2].IndexOf("]");
+                            tmpcomp = components[2].Remove(index, index2 - index + 1);
+                            comp3 = new string[] { components[0], tmpcomp };
+                        }
+
+                        for (int i = 0; i < 2; i++)
+                        {
+                            if (components.Length >= 2)
+                            {
+                                for (int j = 0; j < 2; j++)
+                                {
+                                    if (components.Length >= 3)
+                                    {
+                                        for (int k = 0; k < 2; k++)
+                                        {
+                                            if (segment.Fields.TryGetValue($"{comp1[i]}.{comp2[j]}.{comp3[k]}", out strValue))
+                                            {
+                                                return strValue;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (segment.Fields.TryGetValue($"{comp1[i]}.{comp2[j]}", out strValue))
+                                        {
+                                            return strValue;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (segment.Fields.TryGetValue($"{comp1[i]}", out strValue))
+                                {
+                                    return strValue;
+                                }
+                            }
+                        }
+
+                        /*var index = componentId.IndexOf("[");
+                        while (index != -1)
+                        {
+                            var index2 = componentId.IndexOf("]");
+                            componentId = componentId.Remove(index, index2 - index + 1);   
+                            index = componentId.IndexOf("[");
+                        }
+                        if (segment.Fields.TryGetValue(componentId, out strValue))
+                        {
+                            return strValue;
+                        }*/
                     }
                 }
                 catch (Exception ex)
