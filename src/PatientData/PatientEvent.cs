@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace care.ai.cloud.functions.src.PatientData
 {
@@ -13,6 +14,7 @@ namespace care.ai.cloud.functions.src.PatientData
     /// </summary>
     public partial class PatientEvent : IPatientEvent
     {
+        private readonly ILogger _logger;
         private readonly IEvent _event;
         private readonly IEventData _eventData;
         private readonly ITenant _tenant;
@@ -53,8 +55,9 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <param name="event">IEvent object.</param>
         /// <param name="eventData">IEventData object.</param>
         /// <param name="tenant">ITenant object.</param>
-        public PatientEvent(IEvent @event, IEventData eventData, ITenant tenant)
+        public PatientEvent(ILogger<PatientEvent> logger, IEvent @event, IEventData eventData, ITenant tenant)
         {
+            _logger = logger;
             _event = @event;
             _eventData = eventData;
             _tenant = tenant;
@@ -67,17 +70,26 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <returns>Task<IPatientEvent></returns>
         public async Task<IPatientEvent> FactoryAsync(IHL7_Message message)
         {
-            ITenant[] tenants = await _tenant.GetTenantsAsync(Mappings.MSH.SendingFacility.GetValue(message) ?? null);
-            string tenantName = tenants.FirstOrDefault().FullName ?? string.Empty;
-
-            return new PatientEvent
+            try
             {
-                EventId = Guid.NewGuid().ToString(),
-                Time = DateTime.UtcNow.ToString(),
-                Tenant = tenantName,
-                Event = _event.Factory(message),
-                EventData = _eventData.Factory(message, tenantName)
-            };
+                ITenant[] tenants = await _tenant.GetTenantsAsync(Mappings.MSH.SendingFacility.GetValue(message) ?? null);
+                string tenantName = tenants?.FirstOrDefault()?.FullName ?? string.Empty;
+
+                return new PatientEvent
+                {
+                    EventId = Guid.NewGuid().ToString(),
+                    Time = DateTime.UtcNow.ToString(),
+                    Tenant = tenantName,
+                    Event = _event.Factory(message),
+                    EventData = _eventData.Factory(message, tenantName)
+                };
+            }
+            catch (Exception ex)
+            {
+                string exResult = $"PatientEvent.Factory > Exception:{ex.Message} | InnerException: {ex.InnerException?.Message ?? "null"} | StackTrace: {ex.StackTrace?.ToString()}";
+                _logger.LogInformation(exResult);
+                throw new Exception(exResult);
+            }
         }
     }
 }

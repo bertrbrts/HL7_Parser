@@ -24,9 +24,6 @@ namespace care.ai.cloud.functions
     public class processHL7Message : ICloudEventFunction<MessagePublishedData>
     {
         private readonly ILogger _logger;
-
-        public MessagePublishedData _data;
-
         public processHL7Message() { }
         public processHL7Message(ILogger<processHL7Message> logger)
         {
@@ -39,9 +36,7 @@ namespace care.ai.cloud.functions
         public List<string> MessageIDs { get; private set; }
         public Task HandleAsync(CloudEvent cloudEvent, MessagePublishedData data, CancellationToken cancellationToken)
         {
-
-            _data = data;
-            _logger?.LogInformation($"HL7 Message Received: {_data.Message?.TextData}");
+            _logger?.LogInformation($"HL7 Message Received: {data.Message?.TextData}");
 
             try
             {
@@ -63,7 +58,8 @@ namespace care.ai.cloud.functions
                 .ConfigureAppConfiguration((context, builder) =>
                 {
                     // Get Environment Config.  Set To NULL to debug with production values.
-                    string env = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyConfigurationAttribute>().Configuration;
+                    string env = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ??
+                        Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyConfigurationAttribute>().Configuration;
 
                     builder.SetBasePath(Directory.GetCurrentDirectory() + @"/AppSettings/")
                         .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)

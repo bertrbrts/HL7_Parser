@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
@@ -9,6 +10,7 @@ namespace care.ai.cloud.functions.src.TenantData
     public class Tenant : ITenant
     {
         private readonly IConfiguration _config;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Full Name.
@@ -25,8 +27,9 @@ namespace care.ai.cloud.functions.src.TenantData
         /// Tenant Constructor.
         /// </summary>
         /// <param name="config">IConfiguration object.</param>
-        public Tenant(IConfiguration config)
+        public Tenant(ILogger<Tenant> logger, IConfiguration config)
         {
+            _logger = logger;
             _config = config;
         }
 
@@ -46,9 +49,11 @@ namespace care.ai.cloud.functions.src.TenantData
                 var result = await client.GetStringAsync(url);
                 return JsonConvert.DeserializeObject<Tenant[]>(result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                string exResult = $"Tenant.GetTenantsAsync > Exception:{ex.Message} | InnerException: {ex.InnerException?.Message ?? "null"} | StackTrace: {ex.StackTrace?.ToString()}";
+                _logger.LogInformation(exResult);
+                return null;
             }
         }
     }

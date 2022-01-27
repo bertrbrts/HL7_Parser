@@ -23,7 +23,7 @@ namespace CloudFunctionsTest
     public class processHL7MessageTests : TestingBase
     {
         
-        private const string _hl7Message = @"projects/onboarding-playground-32819/locations/us-east4/datasets/EpicHL7DS/hl7V2Stores/hl7v2Msgs/messages/ijjUhCjDGQqm8z-6kDWXJcvfelNQi2bFbzv7rnNEJxs=";
+        private const string _hl7Message = @"projects/onboarding-playground-32819/locations/us-east4/datasets/EpicHL7DS/hl7V2Stores/hl7v2Msgs/messages/Jrl3tu3kv2bfzmOPrtqgg3kJL5OuCS2qOB2V9GiaOic=";
 
         /// <summary>
         /// This tests await ExecuteCloudEventRequestAsync(cloudEvent); by creating an instance of processHL7Message
@@ -36,7 +36,7 @@ namespace CloudFunctionsTest
         [DataRow(_hl7Message, 2)]
         public async Task HandleAsyncTest(string hl7, int expectedresults)
         {
-            //try
+            try
             {
                 var data = new pubsub.MessagePublishedData { Message = new pubsub.PubsubMessage { TextData = hl7 } };
                 var cloudEvent = new CloudEvent
@@ -55,9 +55,9 @@ namespace CloudFunctionsTest
                 await message.HandleAsync(cloudEvent, data, new CancellationToken());
                 Assert.IsTrue(message.MessageIDs.Count == expectedresults);
             }
-           // catch (Exception ex)
+            catch (Exception ex)
             {
-               // HandleAssertFail(ex);
+                HandleAssertFail(ex);
             }
         }
 
@@ -105,13 +105,17 @@ namespace CloudFunctionsTest
         [TestMethod]
         public async Task MessageGetValue()
         {
-            HL7_Message message = new HL7_Message(null);
-            message.Segments = new List<Segment>();
+            HL7_Message message = new HL7_Message(null, null)
+            {
+                Segments = new List<Segment>()
+            };
 
 
-            Segment seg = new Segment();
-            seg.SegmentId = "TST";
-            seg.Fields = new Dictionary<string, string>();
+            Segment seg = new Segment
+            {
+                SegmentId = "TST",
+                Fields = new Dictionary<string, string>()
+            };
 
 
             seg.Fields.Add("1.1.1", "Test A");
@@ -227,8 +231,5 @@ namespace CloudFunctionsTest
             seg.Fields.Add("1.1.1", "Test B");
 
         }
-
-
-
     }
 }

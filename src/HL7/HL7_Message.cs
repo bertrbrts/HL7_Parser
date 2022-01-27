@@ -2,6 +2,7 @@
 using Google.Apis.CloudHealthcare.v1;
 using Google.Apis.CloudHealthcare.v1.Data;
 using Google.Apis.Services;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace care.ai.cloud.functions.src.HL7
     public class HL7_Message : IHL7_Message
     {
         private static IClientService _service;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// ETag.
@@ -28,8 +30,9 @@ namespace care.ai.cloud.functions.src.HL7
         /// HL7_Message Constructor
         /// </summary>
         /// <param name="service">IClientService service</param>
-        public HL7_Message(IClientService service)
+        public HL7_Message(ILogger<HL7_Message> logger, IClientService service)
         {
+            _logger = logger;
             _service = service;
         }
 
@@ -87,7 +90,9 @@ namespace care.ai.cloud.functions.src.HL7
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error retrieving HL7 Message: {ex.Message} " + ex.InnerException?.Message ?? string.Empty);
+                string exResult = $"IHL7_Message.Factory > Exception:{ex.Message} | InnerException: {ex.InnerException?.Message ?? "null"} | StackTrace: {ex.StackTrace?.ToString()}";
+                _logger.LogInformation(exResult);
+                throw new Exception(exResult);
             }
         }
 
