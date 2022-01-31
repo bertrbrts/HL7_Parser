@@ -18,6 +18,7 @@ namespace care.ai.cloud.functions.src.PatientData
         private readonly IEvent _event;
         private readonly IEventData _eventData;
         private readonly ITenant _tenant;
+        private readonly IPoc _poc;
 
         /// <summary>
         /// IEvent object.
@@ -29,6 +30,11 @@ namespace care.ai.cloud.functions.src.PatientData
         /// </summary>
         [JsonProperty("event_data")]
         public IEventData EventData { get; set; }
+        /// <summary>
+        /// IPoc object.
+        /// </summary>
+        [JsonProperty("poc")]
+        public IPoc Poc { get; set; }
         /// <summary>
         /// Patient Event ID.
         /// </summary>
@@ -55,12 +61,13 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <param name="event">IEvent object.</param>
         /// <param name="eventData">IEventData object.</param>
         /// <param name="tenant">ITenant object.</param>
-        public PatientEvent(ILogger<PatientEvent> logger, IEvent @event, IEventData eventData, ITenant tenant)
+        public PatientEvent(ILogger<PatientEvent> logger, IEvent @event, IEventData eventData, ITenant tenant, IPoc poc)
         {
             _logger = logger;
             _event = @event;
             _eventData = eventData;
             _tenant = tenant;
+            _poc = poc;
         }
 
         /// <summary>
@@ -81,7 +88,8 @@ namespace care.ai.cloud.functions.src.PatientData
                     Time = DateTime.UtcNow.ToString(),
                     Tenant = tenantName,
                     Event = _event.Factory(message),
-                    EventData = _eventData.Factory(message, tenantName)
+                    EventData = _eventData.Factory(message, tenantName),
+                    Poc = _poc.Factory(message)
                 };
             }
             catch (Exception ex)

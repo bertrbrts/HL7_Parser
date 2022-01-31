@@ -11,12 +11,12 @@ namespace care.ai.cloud.functions.src.PatientData
         /// External Facility ID.
         /// </summary>
         [JsonProperty("externalFacilityId")]
-        public string ExternalFacilityId { get; set; }
+        public string ExternalFacilityId { get; set; } 
         /// <summary>
         /// External Location ID.
         /// </summary>
         [JsonProperty("externalLocationId")]
-        public string ExternalLocationId { get; set; }
+        public string ExternalLocationId { get; set; } 
         /// <summary>
         /// External Zone ID.
         /// </summary>
@@ -26,7 +26,7 @@ namespace care.ai.cloud.functions.src.PatientData
         /// External Bed ID.
         /// </summary>
         [JsonProperty("externalBedId")]
-        public string ExternalBedId { get; set; }
+        public string ExternalBedId { get; set; } 
         /// <summary>
         /// IPoc Factory Method.
         /// </summary>
@@ -36,10 +36,10 @@ namespace care.ai.cloud.functions.src.PatientData
         {
             return new PointOfCare
             {
-                ExternalFacilityId = Mappings.PV1.AssignedPatientLocation.Facility.GetValue(message) ?? string.Empty,
-                ExternalLocationId = Mappings.PV1.AssignedPatientLocation.PointOfCare.GetValue(message) ?? string.Empty,
-                ExternalZoneId = Mappings.PV1.AssignedPatientLocation.Room.GetValue(message) ?? string.Empty,
-                ExternalBedId = Mappings.PV1.AssignedPatientLocation.Bed.GetValue(message) ?? string.Empty
+                ExternalFacilityId = Mappings.PV1.AssignedPatientLocation.Facility.GetValue(message) ?? "0",
+                ExternalLocationId = Mappings.PV1.AssignedPatientLocation.PointOfCare.GetValue(message) ?? "0",
+                ExternalZoneId = Mappings.PV1.AssignedPatientLocation.Room.GetValue(message) ?? "0",
+                ExternalBedId = Mappings.PV1.AssignedPatientLocation.Bed.GetValue(message) ?? "0"
             };
         }
     }

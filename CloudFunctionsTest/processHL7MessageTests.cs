@@ -23,7 +23,7 @@ namespace CloudFunctionsTest
     public class processHL7MessageTests : TestingBase
     {
         
-        private const string _hl7Message = @"projects/onboarding-playground-32819/locations/us-east4/datasets/EpicHL7DS/hl7V2Stores/hl7v2Msgs/messages/Jrl3tu3kv2bfzmOPrtqgg3kJL5OuCS2qOB2V9GiaOic=";
+        private const string _hl7Message = @"projects/development-cloud-services/locations/us-east4/datasets/HL7Msgs/hl7V2Stores/EpicHL7Msgs/messages/ofqmVsnFdrLETxhwRD2us0m_nwuZPgAr8f5n-AJzWnQ=";
 
         /// <summary>
         /// This tests await ExecuteCloudEventRequestAsync(cloudEvent); by creating an instance of processHL7Message

@@ -50,7 +50,7 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <summary>
         /// IPoc object.
         /// </summary>
-        IPoc Poc { get; set; }
+        //IPoc Poc { get; set; }
         /// <summary>
         /// Patient Type.
         /// </summary>

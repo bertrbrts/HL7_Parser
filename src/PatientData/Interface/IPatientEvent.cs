@@ -17,6 +17,10 @@ namespace care.ai.cloud.functions.src.PatientData
         /// </summary>
         IEventData EventData { get; set; }
         /// <summary>
+        /// IPoc object.
+        /// </summary>
+        IPoc Poc { get; set; }
+        /// <summary>
         /// Patient Event ID.
         /// </summary>
         string EventId { get; set; }

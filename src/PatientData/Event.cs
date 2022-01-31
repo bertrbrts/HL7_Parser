@@ -45,12 +45,13 @@ namespace care.ai.cloud.functions.src.PatientData
         public IEvent Factory(IHL7_Message message)
         {
             string _code = Mappings.MSH.MessageType.TriggerEvent.GetValue(message) ?? string.Empty;
+            var @event = _config.GetSection("EventCodeLookup:EventCodes").Get<EventCode[]>()
+                    .FirstOrDefault(eventCode => eventCode.Key.Equals(_code));
 
-            return new Event 
-            { 
-                Code = _code,
-                DisplayName = _config.GetSection("EventCodeLookup:EventCodes").Get<EventCode[]>()
-                    .FirstOrDefault(eventCode => eventCode.Key.Equals(_code))?.Value ?? string.Empty
+            return new Event
+            {
+                Code = @event?.Value ?? string.Empty,
+                DisplayName = @event?.DisplayName ?? string.Empty
             };        
         }
     }

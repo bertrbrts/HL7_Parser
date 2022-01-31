@@ -13,5 +13,9 @@
         /// Event Code Value.
         /// </summary>
         public string Value { get; set; }
+        /// <summary>
+        /// Event Code Display Name
+        /// </summary>
+        public string DisplayName { get;set; }
     }
 }

@@ -9,7 +9,7 @@ namespace care.ai.cloud.functions.src.PatientData
     /// </summary>
     public partial class Patient : IPatient
     {
-        private readonly IPoc _iPoc;
+       // private readonly IPoc _iPoc;
         private readonly IAddress _address;
         private readonly IName _name;
 
@@ -66,8 +66,8 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <summary>
         /// IPoc object.
         /// </summary>
-        [JsonProperty("poc")]
-        public IPoc Poc { get; set; }
+        //[JsonProperty("poc")]
+        //public IPoc Poc { get; set; }
         /// <summary>
         /// Patient Type.
         /// </summary>
@@ -85,9 +85,9 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <param name="iPoc">IPoc object.</param>
         /// <param name="address">IAddress object.</param>
         /// <param name="name">IName object.</param>
-        public Patient(IPoc iPoc, IAddress address, IName name)
+        public Patient(/*IPoc iPoc,*/ IAddress address, IName name)
         {
-            _iPoc = iPoc;
+            //_iPoc = iPoc;
             _address = address;
             _name = name;
         }
@@ -105,7 +105,7 @@ namespace care.ai.cloud.functions.src.PatientData
 
             return new Patient
             {
-                Poc = _iPoc.Factory(message),
+               // Poc = _iPoc.Factory(message),
                 Mrn = _mrn,
                 AdmitDate = Mappings.PV1.AdmitDateTime.GetValue(message) ?? string.Empty,
                 AdmitReason = Mappings.PV1.AdmissionType.Text.GetValue(message) ?? string.Empty,
