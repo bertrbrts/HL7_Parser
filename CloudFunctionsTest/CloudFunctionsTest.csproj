@@ -18,4 +18,13 @@
     <ProjectReference Include="..\care.ai.cloud.functions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="AppSettings\appsettings.Debug.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AppSettings\appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

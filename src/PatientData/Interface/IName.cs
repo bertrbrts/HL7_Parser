@@ -7,6 +7,9 @@ namespace care.ai.cloud.functions.src.PatientData
     /// </summary>
     public interface IName
     {
+        public string First { get; set; }
+        public string Last { get; set; }
+        public string Middle { get; set; }
         /// <summary>
         /// IName Factory Method.
         /// </summary>

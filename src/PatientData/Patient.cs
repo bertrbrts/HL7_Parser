@@ -1,6 +1,9 @@
 ﻿using care.ai.cloud.functions.src.HL7;
 using care.ai.cloud.functions.hl7;
 using Newtonsoft.Json;
+using System;
+using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 
 namespace care.ai.cloud.functions.src.PatientData
 {
@@ -9,9 +12,9 @@ namespace care.ai.cloud.functions.src.PatientData
     /// </summary>
     public partial class Patient : IPatient
     {
-       // private readonly IPoc _iPoc;
         private readonly IAddress _address;
         private readonly IName _name;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// IAddress object.
@@ -64,11 +67,6 @@ namespace care.ai.cloud.functions.src.PatientData
         [JsonProperty("phone")]
         public string Phone { get; set; }
         /// <summary>
-        /// IPoc object.
-        /// </summary>
-        //[JsonProperty("poc")]
-        //public IPoc Poc { get; set; }
-        /// <summary>
         /// Patient Type.
         /// </summary>
         [JsonProperty("type")]
@@ -82,42 +80,66 @@ namespace care.ai.cloud.functions.src.PatientData
         /// Patient Constructor.
         /// </summary>
         /// <param name="config">IConfiguration object.</param>
-        /// <param name="iPoc">IPoc object.</param>
         /// <param name="address">IAddress object.</param>
         /// <param name="name">IName object.</param>
-        public Patient(/*IPoc iPoc,*/ IAddress address, IName name)
+        public Patient(ILogger<Patient> logger, IAddress address, IName name)
         {
-            //_iPoc = iPoc;
             _address = address;
             _name = name;
+            _logger = logger;
         }
 
         /// <summary>
         /// IPatient Factory Method.
         /// </summary>
         /// <param name="message">IHL7_Message object.</param>
-        /// <param name="tenantName">Tenant Name.</param>
         /// <returns>IPatient object.</returns>
-        public IPatient Factory(IHL7_Message message, string tenantName)
+        public IPatient Factory(IHL7_Message message)
         {
             string _mrn = Mappings.PID.PatientIdentifierList.IdNumber.GetValue(message, 1) ?? string.Empty;
-            string assignedFac = Mappings.PV1.AssignedPatientLocation.Facility.GetValue(message) ?? string.Empty;
 
             return new Patient
             {
-               // Poc = _iPoc.Factory(message),
                 Mrn = _mrn,
-                AdmitDate = Mappings.PV1.AdmitDateTime.GetValue(message) ?? string.Empty,
+                AdmitDate = ConvertToDateString(Mappings.PV1.AdmitDateTime.GetValue(message), "yyyy-MM-ddTHH:mm:ss.fffffffZ") ?? string.Empty,
                 AdmitReason = Mappings.PV1.AdmissionType.Text.GetValue(message) ?? string.Empty,
-                DischargedDate = Mappings.PV1.DischargeDateTime.GetValue(message) ?? string.Empty,
+                DischargedDate = ConvertToDateString(Mappings.PV1.DischargeDateTime.GetValue(message), "yyyy-MM-ddTHH:mm:ss.fffffffZ") ?? string.Empty,
                 Gender = Mappings.PID.AdministrativeSex.Text.GetValue(message) ?? string.Empty,
-                Birthdate = Mappings.PID.DateTimeOfBirth.GetValue(message) ?? string.Empty,
+                Birthdate = ConvertToDateString(Mappings.PID.DateTimeOfBirth.GetValue(message), "MM/dd/yyyy") ?? string.Empty,
                 Phone = Mappings.PID.PhoneNumberHome.GetValue(message) ?? string.Empty,
                 Address = _address.Factory(message),
                 Name = _name.Factory(message),
-                PatientId = $"{tenantName}|{assignedFac}|{_mrn}",
+                PatientId = _mrn,
                 Type = "IDENTITY.PATIENT"
             };
+        }
+
+        private string ConvertToDateString(string messageDate, string format)
+        {
+            try
+            {
+                string result = string.Empty;
+                if (!string.IsNullOrEmpty(messageDate))
+                {
+                    messageDate = Regex.Replace(messageDate, "[^0-9.]", "");
+                    int length = messageDate.Length;
+
+                    int year = (length >= 4) ? Convert.ToInt32(messageDate.Substring(0, 4)) : 0;
+                    int month = (length >= 6) ? Convert.ToInt32(messageDate.Substring(4, 2)) : 0;
+                    int day = (length >= 8) ? Convert.ToInt32(messageDate.Substring(6, 2)) : 0;
+                    int hour = (length >= 10) ? Convert.ToInt32(messageDate.Substring(8, 2)) : 0;
+                    int minute = (length >= 12) ? Convert.ToInt32(messageDate.Substring(10, 2)) : 0;
+
+                    result = new DateTime(year, month, day, hour, minute, 00).ToString(format);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"invalid date {messageDate}.  Ex: {ex.Message}");
+                return null;
+            }
         }
     }
 }

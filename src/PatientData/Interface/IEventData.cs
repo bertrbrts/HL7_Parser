@@ -15,8 +15,7 @@ namespace care.ai.cloud.functions.src.PatientData
         /// IEventData Factory Method.
         /// </summary>
         /// <param name="message">IHL7_Message object.</param>
-        /// <param name="tenantName">Tenant Name</param>
         /// <returns></returns>
-        IEventData Factory(IHL7_Message message, string tenantName);
+        IEventData Factory(IHL7_Message message);
     }
 }

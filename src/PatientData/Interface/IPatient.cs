@@ -61,6 +61,6 @@ namespace care.ai.cloud.functions.src.PatientData
         /// <param name="message">IHL7_Message object.</param>
         /// <param name="tenantName">Tenant Name.</param>
         /// <returns>IPatient object.</returns>
-        IPatient Factory(IHL7_Message message, string tenantName);
+        IPatient Factory(IHL7_Message message);
     }
 }

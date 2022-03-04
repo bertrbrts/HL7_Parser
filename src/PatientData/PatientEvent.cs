@@ -85,10 +85,10 @@ namespace care.ai.cloud.functions.src.PatientData
                 return new PatientEvent
                 {
                     EventId = Guid.NewGuid().ToString(),
-                    Time = DateTime.UtcNow.ToString(),
+                    Time = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"),
                     Tenant = tenantName,
                     Event = _event.Factory(message),
-                    EventData = _eventData.Factory(message, tenantName),
+                    EventData = _eventData.Factory(message),
                     Poc = _poc.Factory(message)
                 };
             }

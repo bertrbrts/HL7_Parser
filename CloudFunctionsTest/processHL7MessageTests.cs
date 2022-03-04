@@ -1,17 +1,30 @@
 using care.ai.cloud.functions;
-using CloudNative.CloudEvents;
-using Google.Cloud.PubSub.V1;
-using pubsub = Google.Events.Protobuf.Cloud.PubSub.V1;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using Google.Apis.CloudHealthcare.v1.Data;
 using care.ai.cloud.functions.hl7;
 using care.ai.cloud.functions.src.HL7;
+using care.ai.cloud.functions.src.PatientData;
+using care.ai.cloud.functions.src.Services;
+using care.ai.cloud.functions.src.Services.PatientEvent;
+using care.ai.cloud.functions.src.TenantData;
+using CloudNative.CloudEvents;
+using Google.Apis.CloudHealthcare.v1;
+using Google.Apis.CloudHealthcare.v1.Data;
+using Google.Apis.Services;
+using Google.Cloud.PubSub.V1;
+using Google.Events.Protobuf.Cloud.PubSub.V1;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using pubsub = Google.Events.Protobuf.Cloud.PubSub.V1;
 
 namespace CloudFunctionsTest
 {
@@ -21,9 +34,8 @@ namespace CloudFunctionsTest
     /// </summary>
     [TestClass]
     public class processHL7MessageTests : TestingBase
-    {
-        
-        private const string _hl7Message = @"projects/development-cloud-services/locations/us-east4/datasets/HL7Msgs/hl7V2Stores/EpicHL7Msgs/messages/ofqmVsnFdrLETxhwRD2us0m_nwuZPgAr8f5n-AJzWnQ=";
+    {     
+        private const string _hl7Message = @"projects/development-cloud-services/locations/us-east4/datasets/HL7Msgs/hl7V2Stores/EpicHL7Msgs/messages/j2dpgIJJQ-Yg02h38T95jH6rNmGnXKscdOR5DAi2nn0=";
 
         /// <summary>
         /// This tests await ExecuteCloudEventRequestAsync(cloudEvent); by creating an instance of processHL7Message
@@ -38,10 +50,10 @@ namespace CloudFunctionsTest
         {
             try
             {
-                var data = new pubsub.MessagePublishedData { Message = new pubsub.PubsubMessage { TextData = hl7 } };
+                var data = new MessagePublishedData { Message = new pubsub.PubsubMessage { TextData = hl7 } };
                 var cloudEvent = new CloudEvent
                 {
-                    Type = pubsub.MessagePublishedData.MessagePublishedCloudEventType,
+                    Type = MessagePublishedData.MessagePublishedCloudEventType,
                     Source = new Uri("//pubsub.googleapis.com", UriKind.RelativeOrAbsolute),
                     Id = Guid.NewGuid().ToString(),
                     Time = DateTimeOffset.UtcNow,
@@ -52,8 +64,47 @@ namespace CloudFunctionsTest
                 var logger = loggerfactory.CreateLogger<processHL7Message>();
 
                 processHL7Message message = new processHL7Message(logger);
+
                 await message.HandleAsync(cloudEvent, data, new CancellationToken());
                 Assert.IsTrue(message.MessageIDs.Count == expectedresults);
+            }
+            catch (Exception ex)
+            {
+                HandleAssertFail(ex);
+            }
+        }
+
+        [TestMethod]
+        [DataRow(_hl7Message, 10)]
+        public async Task HL7_LoadTest(string hl7, int messageCount)
+        {
+            try
+            {
+                IHost host = CreateHost();
+                var data = new MessagePublishedData { Message = new pubsub.PubsubMessage { TextData = hl7 } };
+                IPatientEventService patientEventService = ActivatorUtilities.CreateInstance<PatientEventService>(host.Services);
+                IHL7_Message message = patientEventService.HL7_Message.Factory(data?.Message.TextData);
+                IPatientEvent patientEvent = await patientEventService.PatientEvent.FactoryAsync(message);
+                string fname = patientEvent.EventData.Patient.Name.First;
+
+                int patientMRN = Convert.ToInt32(patientEvent.EventData.Patient.Mrn);
+
+                string patientEventJSON = string.Empty;
+                List<string> messageIDs = new List<string>();
+
+                for (int i = 0; i < messageCount; i++)
+                {
+                    patientEvent.EventId = Guid.NewGuid().ToString();
+                    patientEvent.EventData.Patient.PatientId = 
+                        patientEvent.EventData.Patient.Mrn = (patientMRN + i).ToString();
+
+                    patientEvent.EventData.Patient.Name.First = $"{fname}_{i}";
+
+                    patientEventJSON = await Task.Run(() => JsonConvert.SerializeObject(patientEvent));
+                    messageIDs.AddRange(await patientEventService.PublisherService.PublishAsync(patientEventJSON));
+                }
+
+                Assert.AreEqual(messageIDs.Count, messageCount);
             }
             catch (Exception ex)
             {
@@ -71,7 +122,7 @@ namespace CloudFunctionsTest
         /// <returnsTask></returns>
 
         [TestMethod]
-        [DataRow("onboarding-playground-32819", "NUNIT", 5000)]
+        [DataRow("development-cloud-services", "NUNIT", 5000)]
         public async Task SubscriberPullAsyncTest(string projectID, string subscription, int delay)
         {
             bool acknowledge = false;
@@ -80,7 +131,7 @@ namespace CloudFunctionsTest
             SubscriberClient subscriber = await SubscriberClient.CreateAsync(subscriptionName);
 
             int messageCount = 0;
-            Task startTask = subscriber.StartAsync((PubsubMessage message, CancellationToken cancel) =>
+            Task startTask = subscriber.StartAsync((Google.Cloud.PubSub.V1.PubsubMessage message, CancellationToken cancel) =>
             {
                 string text = System.Text.Encoding.UTF8.GetString(message.Data.ToArray());
                 Console.WriteLine($"Message {message.MessageId}: {text}");
@@ -103,7 +154,7 @@ namespace CloudFunctionsTest
         }
 
         [TestMethod]
-        public async Task MessageGetValue()
+        public void MessageGetValue()
         {
             HL7_Message message = new HL7_Message(null, null)
             {
@@ -229,7 +280,36 @@ namespace CloudFunctionsTest
             seg.Fields.Add("1", "Test A");
             seg.Fields.Add("1.1", "Test B");
             seg.Fields.Add("1.1.1", "Test B");
+        }
 
+        private static IHost CreateHost()
+        {
+            return Host.CreateDefaultBuilder()
+                .ConfigureAppConfiguration((context, builder) =>
+                {
+                    // Get Environment Config.  Set To NULL to debug with production values.
+                    string env = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ??
+                        Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyConfigurationAttribute>().Configuration;
+
+                    builder.SetBasePath(Directory.GetCurrentDirectory() + @"/AppSettings/")
+                        .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile($"appsettings.{env}.json", optional: true);
+                })
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddSingleton<IClientService, CloudHealthcareService>();
+                    services.AddSingleton<IHL7_Message, HL7_Message>();
+                    services.AddSingleton<IPatientEvent, PatientEvent>();
+                    services.AddTransient<IPublisherService, PublisherService>();
+                    services.AddTransient<IAddress, Address>();
+                    services.AddTransient<IEvent, Event>();
+                    services.AddTransient<IEventData, EventData>();
+                    services.AddTransient<IName, Name>();
+                    services.AddTransient<IPatient, Patient>();
+                    services.AddTransient<IPoc, PointOfCare>();
+                    services.AddTransient<ITenant, Tenant>();
+                })
+                .Build();
         }
     }
 }

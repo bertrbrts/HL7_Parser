@@ -33,13 +33,12 @@ namespace care.ai.cloud.functions.src.PatientData
         /// Event Data Factory.
         /// </summary>
         /// <param name="message">IHL7_Message object.</param>
-        /// <param name="tenantName">Tenant Name</param>
         /// <returns>IEventData object.</returns>
-        public IEventData Factory(IHL7_Message message, string tenantName)
+        public IEventData Factory(IHL7_Message message)
         {
             return new EventData
             {
-                Patient = _patient.Factory(message, tenantName)
+                Patient = _patient.Factory(message)
             };
         }
     }

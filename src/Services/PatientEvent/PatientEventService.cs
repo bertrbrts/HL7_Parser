@@ -12,12 +12,13 @@ namespace care.ai.cloud.functions.src.Services.PatientEvent
     /// <summary>
     /// Patient Event Service.
     /// </summary>
-    internal class PatientEventService : IPatientEventService
-    {
-        private readonly IHL7_Message _hl7_Message;
-        private readonly IPatientEvent _patientEvent;
-        private readonly IPublisherService _publisherService;
+    public class PatientEventService : IPatientEventService
+    {     
         private readonly ILogger _logger;
+
+        public IHL7_Message HL7_Message { get; set; }
+        public IPatientEvent PatientEvent { get; set; }
+        public IPublisherService PublisherService { get; set; }
 
         public string PatientEventJSON = string.Empty;
 
@@ -29,10 +30,11 @@ namespace care.ai.cloud.functions.src.Services.PatientEvent
         /// <param name="publisherService">IPublisherService object.</param>
         public PatientEventService(ILogger<PatientEventService> logger, IHL7_Message hL7_Message, IPatientEvent patientEvent, IPublisherService publisherService)
         {
-            _logger = logger;
-            _hl7_Message = hL7_Message;
-            _patientEvent = patientEvent;
-            _publisherService = publisherService;
+            _logger = logger;                   
+
+            HL7_Message = hL7_Message;
+            PatientEvent = patientEvent;
+            PublisherService = publisherService;
         }
 
         /// <summary>
@@ -44,11 +46,11 @@ namespace care.ai.cloud.functions.src.Services.PatientEvent
         {
             try
             {
-                IHL7_Message message = _hl7_Message.Factory(data?.Message.TextData);
-                IPatientEvent patientEvent = await _patientEvent.FactoryAsync(message);
+                IHL7_Message message = HL7_Message.Factory(data?.Message.TextData);
+                IPatientEvent patientEvent = await PatientEvent.FactoryAsync(message);
                 PatientEventJSON = await Task.Run(() => JsonConvert.SerializeObject(patientEvent));
 
-                return await _publisherService.PublishAsync(PatientEventJSON);
+                return await PublisherService.PublishAsync(PatientEventJSON);
             }
             catch (Exception ex)
             {
