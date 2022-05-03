@@ -1,4 +1,4 @@
-﻿namespace care.ai.cloud.functions.src.HL7
+﻿namespace HL7Parser.HL7
 {
     /// <summary>
     /// Message Fields.

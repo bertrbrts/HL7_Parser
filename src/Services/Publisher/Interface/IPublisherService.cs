@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace care.ai.cloud.functions.src.Services
+namespace HL7Parser.Services.Publisher
 {
     /// <summary>
     /// IPublisherService Interface.

@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\care.ai.cloud.functions.csproj" />
+    <ProjectReference Include="..\HL7_Parser.csproj" />
   </ItemGroup>
 
   <ItemGroup>

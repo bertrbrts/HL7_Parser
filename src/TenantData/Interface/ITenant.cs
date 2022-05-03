@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace care.ai.cloud.functions.src.TenantData
+namespace HL7Parser.TenantData
 {
     /// <summary>
     /// ITenant Interface.

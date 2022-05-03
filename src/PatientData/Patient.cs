@@ -1,11 +1,11 @@
-﻿using care.ai.cloud.functions.src.HL7;
-using care.ai.cloud.functions.hl7;
+﻿using HL7Parser.HL7;
+using HL7Parser;
 using Newtonsoft.Json;
 using System;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 
-namespace care.ai.cloud.functions.src.PatientData
+namespace HL7Parser.PatientData
 {
     /// <summary>
     /// Patient

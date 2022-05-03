@@ -1,7 +1,7 @@
-﻿using care.ai.cloud.functions.src.HL7;
+﻿using HL7Parser.HL7;
 using System.Threading.Tasks;
 
-namespace care.ai.cloud.functions.src.PatientData
+namespace HL7Parser.PatientData
 {
     /// <summary>
     /// IPatientEvent Interface.

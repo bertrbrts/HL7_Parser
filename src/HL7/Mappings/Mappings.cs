@@ -1,4 +1,4 @@
-namespace care.ai.cloud.functions.hl7
+namespace HL7Parser
 {
     public partial class Mappings
     {

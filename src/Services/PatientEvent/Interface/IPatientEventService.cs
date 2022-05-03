@@ -1,10 +1,11 @@
-﻿using care.ai.cloud.functions.src.HL7;
-using care.ai.cloud.functions.src.PatientData;
+﻿using HL7Parser.HL7;
+using HL7Parser.PatientData;
 using Google.Events.Protobuf.Cloud.PubSub.V1;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using HL7Parser.Services.Publisher;
 
-namespace care.ai.cloud.functions.src.Services.PatientEvent
+namespace HL7Parser.Services.PatientEvent
 {
     /// <summary>
     /// IPatientEventService Interface.

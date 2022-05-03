@@ -1,1 +1,0 @@
-﻿gcloud functions deploy EpicHL7 --entry-point care.ai.cloud.functions.processHL7Message --runtime dotnet3 --trigger-topic inboundHL7Epic --region us-east4

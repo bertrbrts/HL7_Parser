@@ -1,4 +1,4 @@
-﻿namespace care.ai.cloud.functions.src.Services
+﻿namespace HL7Parser.Services.Publisher
 {
     /// <summary>
     /// Publisher Object.

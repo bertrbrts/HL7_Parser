@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace care.ai.cloud.functions.hl7
+﻿namespace HL7Parser
 {
     public partial class Mappings
     {

@@ -1,10 +1,10 @@
-﻿using care.ai.cloud.functions.src.HL7;
+﻿using HL7Parser.HL7;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace care.ai.cloud.functions.hl7
+namespace HL7Parser
 {
 
     public abstract class HL7Base<T> where T : HL7Base<T>

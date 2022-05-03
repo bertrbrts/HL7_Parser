@@ -5,7 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace care.ai.cloud.functions.src.TenantData
+namespace HL7Parser.TenantData
 {
     public class Tenant : ITenant
     {

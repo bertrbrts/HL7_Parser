@@ -1,8 +1,8 @@
-using care.ai.cloud.functions.src.HL7;
-using care.ai.cloud.functions.src.PatientData;
-using care.ai.cloud.functions.src.Services;
-using care.ai.cloud.functions.src.Services.PatientEvent;
-using care.ai.cloud.functions.src.TenantData;
+using HL7Parser.HL7;
+using HL7Parser.PatientData;
+using HL7Parser.Services.Publisher;
+using HL7Parser.Services.PatientEvent;
+using HL7Parser.TenantData;
 using CloudNative.CloudEvents;
 using Google.Apis.CloudHealthcare.v1;
 using Google.Apis.Services;
@@ -19,13 +19,13 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace care.ai.cloud.functions
+namespace HL7Parser
 {
-    public class processHL7Message : ICloudEventFunction<MessagePublishedData>
+    public class ProcessHL7Message : ICloudEventFunction<MessagePublishedData>
     {
         private readonly ILogger _logger;
-        public processHL7Message() { }
-        public processHL7Message(ILogger<processHL7Message> logger)
+        public ProcessHL7Message() { }
+        public ProcessHL7Message(ILogger<ProcessHL7Message> logger)
         {
             _logger = logger;
         }

@@ -1,7 +1,7 @@
 ﻿using Google.Apis.CloudHealthcare.v1.Data;
 using System.Collections.Generic;
 
-namespace care.ai.cloud.functions.src.HL7
+namespace HL7Parser.HL7
 {
     /// <summary>
     /// IHL7_Message Interface.

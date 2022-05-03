@@ -1,13 +1,13 @@
-﻿using care.ai.cloud.functions.src.HL7;
-using care.ai.cloud.functions.hl7;
-using care.ai.cloud.functions.src.TenantData;
+﻿using HL7Parser.HL7;
+using HL7Parser;
+using HL7Parser.TenantData;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace care.ai.cloud.functions.src.PatientData
+namespace HL7Parser.PatientData
 {
     /// <summary>
     /// Patient Event.

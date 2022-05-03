@@ -1,4 +1,4 @@
-﻿namespace care.ai.cloud.functions.src.PatientData
+﻿namespace HL7Parser.PatientData
 {
     /// <summary>
     /// Event Code Key Value Pair.

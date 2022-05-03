@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using messageResource = Google.Apis.CloudHealthcare.v1.ProjectsResource.LocationsResource.DatasetsResource.Hl7V2StoresResource.MessagesResource;
 
-namespace care.ai.cloud.functions.src.HL7
+namespace HL7Parser.HL7
 {
     public class HL7_Message : IHL7_Message
     {

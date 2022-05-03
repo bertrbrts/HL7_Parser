@@ -1,16 +1,15 @@
-using care.ai.cloud.functions;
-using care.ai.cloud.functions.hl7;
-using care.ai.cloud.functions.src.HL7;
-using care.ai.cloud.functions.src.PatientData;
-using care.ai.cloud.functions.src.Services;
-using care.ai.cloud.functions.src.Services.PatientEvent;
-using care.ai.cloud.functions.src.TenantData;
 using CloudNative.CloudEvents;
 using Google.Apis.CloudHealthcare.v1;
 using Google.Apis.CloudHealthcare.v1.Data;
 using Google.Apis.Services;
 using Google.Cloud.PubSub.V1;
 using Google.Events.Protobuf.Cloud.PubSub.V1;
+using HL7Parser;
+using HL7Parser.HL7;
+using HL7Parser.PatientData;
+using HL7Parser.Services.PatientEvent;
+using HL7Parser.Services.Publisher;
+using HL7Parser.TenantData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,9 +32,9 @@ namespace CloudFunctionsTest
     /// pointed to the json key. 
     /// </summary>
     [TestClass]
-    public class processHL7MessageTests : TestingBase
+    public class ProcessHL7MessageTests : TestingBase
     {     
-        private const string _hl7Message = @"projects/development-cloud-services/locations/us-east4/datasets/HL7Msgs/hl7V2Stores/EpicHL7Msgs/messages/j2dpgIJJQ-Yg02h38T95jH6rNmGnXKscdOR5DAi2nn0=";
+        private const string _hl7Message = @"";
 
         /// <summary>
         /// This tests await ExecuteCloudEventRequestAsync(cloudEvent); by creating an instance of processHL7Message
@@ -61,9 +60,9 @@ namespace CloudFunctionsTest
                 };
 
                 var loggerfactory = new LoggerFactory();
-                var logger = loggerfactory.CreateLogger<processHL7Message>();
+                var logger = loggerfactory.CreateLogger<ProcessHL7Message>();
 
-                processHL7Message message = new processHL7Message(logger);
+                ProcessHL7Message message = new ProcessHL7Message(logger);
 
                 await message.HandleAsync(cloudEvent, data, new CancellationToken());
                 Assert.IsTrue(message.MessageIDs.Count == expectedresults);
@@ -274,9 +273,12 @@ namespace CloudFunctionsTest
             seg.Fields.Add("13[2].15[2].14", "Test U");
             seg.Fields.Add("13[2].15[2].14[2]", "Test V");
 
-            seg = new Segment();
-            seg.SegmentId = "TST";
-            seg.Fields = new Dictionary<string, string>(); ;
+            seg = new Segment
+            {
+                SegmentId = "TST",
+                Fields = new Dictionary<string, string>()
+            };
+
             seg.Fields.Add("1", "Test A");
             seg.Fields.Add("1.1", "Test B");
             seg.Fields.Add("1.1.1", "Test B");
